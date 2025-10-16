@@ -3,7 +3,7 @@ name: Compilação Android via Flet
 on:
   push:
     branches:
-      - principal # A branch principal do seu projeto
+      - principal 
   workflow_dispatch:
 
 jobs:
@@ -17,20 +17,21 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.x' # Versão estável
+          flutter-version: '3.x'
           channel: 'stable'
 
       # 2. Configura o ambiente Python e instala o Flet
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11' # Versão Python que você usou
-          
+          python-version: '3.11'
+
       - name: Instalar Flet
         run: pip install flet
 
-      # 3. Compila o APK (Usando a correção do --module-name)
+      # 3. Compila o APK (CORREÇÃO APLICADA AQUI)
       - name: Build Android APK
+        # Use o --module-name para especificar o seu arquivo principal (AnimalSoundsAppV2.py)
         run: flet build apk --module-name AnimalSoundsAppV2
 
       # 4. Upload do APK como Artefato
@@ -38,5 +39,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ github.event.repository.name }}_APK
-          # Caminho padrão do Flutter/Flet para o APK
           path: build/app/outputs/flutter-apk/app-release.apk
