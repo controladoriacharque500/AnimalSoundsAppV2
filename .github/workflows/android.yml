@@ -1,8 +1,10 @@
 jobs:
   build-android:
     runs-on: ubuntu-latest
+    workflow_dispatch:
     steps:
       - uses: actions/checkout@v4
+      
       # Instala o Flutter e configura o ambiente
       - uses: subosito/flutter-action@v2
         with:
