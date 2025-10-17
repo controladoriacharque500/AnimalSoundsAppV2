@@ -1,4 +1,4 @@
-name: Compilação Android via Flet
+name: Compilação Android via Flet (Forçada)
 
 on:
   push:
@@ -13,32 +13,38 @@ jobs:
       - name: Checkout Código Fonte
         uses: actions/checkout@v4
 
-      # 1. Configura o Flutter SDK
+      # 1. Configura o Flutter SDK (Mantemos 3.19.x para estabilidade)
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.19.x'
           channel: 'stable'
 
-      # 2. Configura o ambiente Python e instala o Flet
+      # 2. Sincroniza e Atualiza o Flutter
+      - name: Flutter Clean e Upgrade
+        run: |
+          flutter clean
+          flutter pub cache repair
+          flutter upgrade --force
+
+      # 3. Configura o ambiente Python e instala/atualiza o Flet
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
           
-      - name: Instalar Flet
-        run: pip install flet
+      - name: Instalar/Atualizar Flet
+        run: pip install flet --upgrade
 
-      # 3. NOVO PASSO: Aceitar as licenças do Android SDK
+      # 4. Aceitar as licenças do Android SDK
       - name: Aceitar Licenças Android
         run: yes | flutter doctor --android-licenses
 
-      # 4. Compila o APK (Usando a correção do --module-name)
+      # 5. Compila o APK 
       - name: Build Android APK
-        # O 'flet build' agora terá todas as licenças aceitas
         run: flet build apk --module-name AnimalSoundsAppV2
 
-      # 5. Upload do APK como Artefato
+      # 6. Upload do APK como Artefato
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
